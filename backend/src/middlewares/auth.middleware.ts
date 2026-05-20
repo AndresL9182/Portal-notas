@@ -8,10 +8,14 @@ import jwt from 'jsonwebtoken'
 
 interface JwtPayload {
   id: string
+  correo: string
 }
 
-export interface AuthRequest extends Request {
+export interface AuthRequest
+  extends Request {
+
   userId?: string
+
 }
 
 export const authMiddleware = (
@@ -20,30 +24,47 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
 
-  const authHeader = req.headers.authorization
-
-  if (!authHeader) {
-
-    return res.status(401).json({
-      message: 'Token requerido'
-    })
-
-  }
-
-  const token = authHeader.split(' ')[1]
-
   try {
+
+    const authHeader =
+      req.headers.authorization
+
+    console.log('HEADER:')
+    console.log(authHeader)
+
+    if (!authHeader) {
+
+      return res.status(401).json({
+        message: 'Token requerido'
+      })
+
+    }
+
+    const token =
+      authHeader.replace(
+        'Bearer ',
+        ''
+      )
+
+    console.log('TOKEN:')
+    console.log(token)
 
     const decoded = jwt.verify(
       token,
       'secret123'
     ) as JwtPayload
 
+    console.log('DECODED:')
+    console.log(decoded)
+
     req.userId = decoded.id
 
     next()
 
   } catch (error) {
+
+    console.log('ERROR JWT:')
+    console.log(error)
 
     return res.status(401).json({
       message: 'Token inválido'

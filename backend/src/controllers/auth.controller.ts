@@ -3,8 +3,13 @@ import prisma from '../prisma/client'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (
+  req: Request,
+  res: Response
+) => {
+
   try {
+
     const {
       nombre,
       correo,
@@ -21,12 +26,17 @@ export const register = async (req: Request, res: Response) => {
     })
 
     if (userExists) {
+
       return res.status(400).json({
         message: 'Usuario ya existe'
       })
+
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(
+      password,
+      10
+    )
 
     const user = await prisma.user.create({
       data: {
@@ -42,17 +52,28 @@ export const register = async (req: Request, res: Response) => {
     res.status(201).json(user)
 
   } catch (error) {
+
     console.log(error)
 
     res.status(500).json({
       message: 'Error registrando usuario'
     })
+
   }
+
 }
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (
+  req: Request,
+  res: Response
+) => {
+
   try {
-    const { correo, password } = req.body
+
+    const {
+      correo,
+      password
+    } = req.body
 
     const user = await prisma.user.findUnique({
       where: {
@@ -61,9 +82,11 @@ export const login = async (req: Request, res: Response) => {
     })
 
     if (!user) {
+
       return res.status(400).json({
         message: 'Usuario no encontrado'
       })
+
     }
 
     const validPassword = await bcrypt.compare(
@@ -72,9 +95,11 @@ export const login = async (req: Request, res: Response) => {
     )
 
     if (!validPassword) {
+
       return res.status(400).json({
         message: 'Contraseña incorrecta'
       })
+
     }
 
     const token = jwt.sign(
@@ -82,7 +107,7 @@ export const login = async (req: Request, res: Response) => {
         id: user.id,
         correo: user.correo
       },
-      process.env.JWT_SECRET as string,
+      'secret123',
       {
         expiresIn: '7d'
       }
@@ -95,10 +120,13 @@ export const login = async (req: Request, res: Response) => {
     })
 
   } catch (error) {
+
     console.log(error)
 
     res.status(500).json({
       message: 'Error login'
     })
+
   }
+
 }

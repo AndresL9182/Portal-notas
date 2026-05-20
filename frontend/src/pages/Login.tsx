@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-import { useNavigate } from 'react-router-dom'
+import {
+  useNavigate
+} from 'react-router-dom'
 
 import {
   useGoogleLogin
@@ -16,54 +18,8 @@ export default function Login() {
   const [password, setPassword] =
     useState('')
 
-  const navigate = useNavigate()
-
-  const loginGoogle =
-    useGoogleLogin({
-
-      scope:
-        'openid profile email https://www.googleapis.com/auth/classroom.courses.readonly',
-
-      onSuccess: async (
-        tokenResponse
-      ) => {
-
-        console.log(
-          tokenResponse
-        )
-
-        localStorage.setItem(
-          'google_access_token',
-          tokenResponse.access_token
-        )
-
-        localStorage.setItem(
-          'token',
-          tokenResponse.access_token
-        )
-
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            nombre:
-              'Usuario Google'
-          })
-        )
-
-        window.location.href =
-          '/dashboard'
-
-      },
-
-      onError: () => {
-
-        console.log(
-          'Google Login Failed'
-        )
-
-      }
-
-    })
+  const navigate =
+    useNavigate()
 
   const handleLogin =
     async () => {
@@ -103,6 +59,51 @@ export default function Login() {
 
     }
 
+  const loginGoogle = useGoogleLogin({
+
+    flow: 'implicit',
+
+    scope:
+  'openid profile email https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.coursework.students.readonly https://www.googleapis.com/auth/classroom.student-submissions.students.readonly',
+
+    prompt: 'consent',
+
+    onSuccess: async (
+  tokenResponse
+) => {
+
+  console.log(tokenResponse)
+
+  fetch(
+    'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' +
+    tokenResponse.access_token
+  )
+  .then(res => res.json())
+  .then(data => console.log(data))
+
+  localStorage.setItem(
+    'google_access_token',
+    tokenResponse.access_token
+  )
+
+ setTimeout(() => {
+
+  window.location.href =
+    '/materias'
+
+}, 5000)
+
+},
+    onError: () => {
+
+      alert(
+        'Error Google Login'
+      )
+
+    }
+
+  })
+
   return (
 
     <div className="
@@ -116,18 +117,19 @@ export default function Login() {
       <div className="
         bg-white
         p-10
-        rounded-2xl
-        shadow-xl
+        rounded-3xl
+        shadow-2xl
         w-[400px]
       ">
 
         <h1 className="
-          text-3xl
+          text-4xl
           font-bold
-          mb-8
           text-center
+          text-blue-900
+          mb-8
         ">
-          Portal Estudiantil
+          UNICOMFACAUCA
         </h1>
 
         <div className="
@@ -137,47 +139,61 @@ export default function Login() {
         ">
 
           <input
+
             type="email"
+
             placeholder="Correo"
+
             value={correo}
+
             onChange={(e) =>
               setCorreo(
                 e.target.value
               )
             }
+
             className="
+              p-4
+              rounded-xl
               border
-              p-3
-              rounded-lg
             "
+
           />
 
           <input
+
             type="password"
+
             placeholder="Contraseña"
+
             value={password}
+
             onChange={(e) =>
               setPassword(
                 e.target.value
               )
             }
+
             className="
+              p-4
+              rounded-xl
               border
-              p-3
-              rounded-lg
             "
+
           />
 
           <button
+
             onClick={handleLogin}
+
             className="
-              bg-blue-600
+              bg-blue-700
               text-white
-              p-3
-              rounded-lg
+              p-4
+              rounded-xl
               font-bold
-              hover:bg-blue-700
             "
+
           >
             Ingresar
           </button>
@@ -191,16 +207,13 @@ export default function Login() {
             className="
               bg-red-500
               text-white
-              p-3
-              rounded-lg
+              p-4
+              rounded-xl
               font-bold
-              hover:bg-red-600
             "
 
           >
-
             Continuar con Google
-
           </button>
 
         </div>

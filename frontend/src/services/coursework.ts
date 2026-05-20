@@ -9,10 +9,12 @@ export async function getCourseWork(
       'google_access_token'
     )
 
+  console.log(token)
+
   const response =
     await axios.get(
 
-      `https://classroom.googleapis.com/v1/courses/${courseId}/courseWork`,
+      `https://classroom.googleapis.com/v1/courses/${courseId}/courseWork?courseWorkStates=PUBLISHED`,
 
       {
         headers: {

@@ -1,18 +1,33 @@
-import { Navigate } from 'react-router-dom'
+import {
+  Navigate
+} from 'react-router-dom'
 
-interface Props {
-  children: React.ReactNode
-}
-
-export default function ProtectedRoute({
+export default function
+ProtectedRoute({
   children
-}: Props) {
+}: any) {
 
-  const token = localStorage.getItem('token')
+  const token =
+    localStorage.getItem(
+      'token'
+    )
 
-  if (!token) {
-    return <Navigate to="/" />
+  const googleToken =
+    localStorage.getItem(
+      'google_access_token'
+    )
+
+  if (
+    !token &&
+    !googleToken
+  ) {
+
+    return (
+      <Navigate to="/" />
+    )
+
   }
 
   return children
+
 }
