@@ -106,15 +106,14 @@ function App() {
 
         {/* HISTORIAL */}
 
-        <Route
-          path="/historial"
-          element={
-            <ProtectedRoute>
-              <HistorialPage />
-            </ProtectedRoute>
-          }
-        />
-
+<Route
+  path="/historial"
+  element={
+    <ProtectedRoute>
+      <HistorialPage />
+    </ProtectedRoute>
+  }
+/>
         {/* AULAS */}
 
         <Route
